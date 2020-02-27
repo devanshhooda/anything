@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../mainScreen.dart';
-import 'Auth.dart';
+import 'auth.dart';
 
 class GoogleUI extends StatelessWidget {
   final TextStyle col = new TextStyle(

@@ -1,9 +1,11 @@
-import 'package:build_anything/Anonymous%20SignIn/ui.dart';
+import 'package:build_anything/Anonymous%20Sign%20In/authService.dart';
+// import 'package:build_anything/Anonymous%20Sign%20In/ui.dart';
+import 'package:build_anything/Anonymous%20Sign%20In/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'Anonymous SignIn/auth_service.dart';
-import 'Google SignIn/Auth.dart';
-import 'Google SignIn/UI.dart';
+import 'Anonymous Sign In/anonyScreen.dart';
+import 'Google SignIn/auth.dart';
+import 'Google SignIn/ui.dart';
 
 List<String> methods = ["Google Sign-In", "Facebook Sign-In", "Anonymously"];
 
@@ -33,22 +35,21 @@ class Auth extends StatelessWidget {
 
 void callAuthMethods(BuildContext context, int i) {
   if (i == 0) {
-    googleSignIn().whenComplete(() {
-      CircularProgressIndicator(
-        backgroundColor: Colors.white,
-      );
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return GoogleUI();
-      }));
-    });
+    try {
+      if (googleSignIn() != null) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return GoogleUI();
+        }));
+      }
+    } catch (e) {
+      throw (e);
+    }
   } else if (i == 1)
     print('Facebook Sign-In');
   else if (i == 2) {
-    _signInAnonymously(context);
     print('Anonymous Sign-in');
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return AuthWidget();
-    }));
+    _anonymousSignIn(context).whenComplete(() => Navigator.push(
+        context, MaterialPageRoute(builder: (_) => AnonymousSignIn())));
   }
 }
 
@@ -71,12 +72,7 @@ Widget button(BuildContext context, int i) {
   );
 }
 
-Future<void> _signInAnonymously(BuildContext context) async {
-  try {
-    final auth = Provider.of<FirebaseAuthService>(context, listen: false);
-    final user = await auth.anonymousSignIn();
-    print('uid: ${user.uid}');
-  } catch (e) {
-    print(e.toString());
-  }
+Future<User> _anonymousSignIn(BuildContext context) async {
+  final _auth = Provider.of<AuthService>(context, listen: false);
+  // return await _auth.signInAnon(name, address, phn);
 }
